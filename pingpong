@@ -1,0 +1,84 @@
+//create the ball, playerPaddle and computerPaddle as sprite objects
+var ball = createSprite(200,200,10,10);
+var playerPaddle = createSprite(390,200,10,70);
+var computerPaddle = createSprite(10,200,10,70);
+var GameState = "serve";
+var cscore = 0;
+var pscore = 0;
+function draw() {
+  //clear the screen
+  background("white");
+  if(GameState === "serve"){
+  text("HIT SPACE TO START", 150, 175);
+  }
+  //make the player paddle move with the mouse's y position
+  playerPaddle.y = World.mouseY;
+  
+  //AI for the computer paddle
+  //make it move with the ball's y position
+  computerPaddle.y = ball.y;
+  
+  //draw line at the centre
+  for (var i = 0; i < 400; i=i+20) {
+    line(200,i,200,i+10);
+  }
+  
+  
+  //create edge boundaries
+  //make the ball bounce with the top and the bottom edges
+  createEdgeSprites();
+  ball.bounceOff(topEdge);
+  ball.bounceOff(bottomEdge);
+  ball.bounceOff(playerPaddle);
+  ball.bounceOff(computerPaddle);
+
+
+  //serve the ball when space is pressed
+  
+  if (keyDown("space") && GameState === "serve") {
+    serve();
+    GameState = "play";
+  }
+  
+ 
+  //reset the ball to the centre if it crosses the screen
+  if(ball.x > 400 || ball.x <0) {
+  if(ball.x > 400){
+    cscore = cscore + 1;
+  }
+  if(ball.x < 0){
+    pscore = pscore + 1;
+     
+  }
+      reset();
+      GameState = "serve";
+  }
+  text(cscore, 170, 30);     
+  text(pscore, 220, 30);
+  if(cscore === 5 || pscore === 5){
+  GameState = "end";
+    text("GAME OVER", 175, 175); 
+    text("press r to restart", 170, 190);
+    
+  }
+  if(keyDown("r") && GameState === "end"){
+    
+    GameState = "serve";
+pscore = 0;
+cscore = 0;
+  }
+  
+  drawSprites();
+}
+
+function serve() {
+  ball.velocityX = 3;
+  ball.velocityY = 4;
+}
+
+function reset() {
+  ball.x = 200;
+  ball.y = 200;
+  ball.velocityX = 0;
+  ball.velocityY = 0;
+}
